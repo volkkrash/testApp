@@ -1,0 +1,62 @@
+version: '3.7'
+
+networks:
+  application:
+    driver: bridge
+
+services:
+  app:
+    image: test_app:latest
+    container_name: test_app
+    build:
+      args:
+        user: user
+        uid: 1000
+      context: ./docker/php
+    working_dir: /var/www/app
+    volumes:
+      - .:/var/www/app
+    networks:
+      - application
+  nginx:
+    container_name: test_app_nginx
+    build:
+      context: ./docker/nginx
+    working_dir: /var/www/app
+    volumes:
+      - .:/var/www/app
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    ports:
+      - "80:80"
+    networks:
+      - application
+
+  mysql:
+    container_name: test_app_mysql
+    build:
+      context: ./docker/mysql
+    ports:
+      - "3306:3306"
+    env_file:
+      - .env
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+    networks:
+      - application
+  phpmyadmin:
+    container_name: testappphpmyadmin
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
+    ports:
+      - "8081:80"
+    restart: always
+    networks:
+      - application
