@@ -1,0 +1,26 @@
+{
+  "name": "volkkrash/test-app",
+  "description": "description",
+  "minimum-stability": "dev",
+  "license": "proprietary",
+  "type": "project",
+  "authors": [
+    {
+      "name": "volkkrash",
+      "email": "dev-spark@ukr.net"
+    }
+  ],
+  "require": {
+    "php": "^8.0"
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    }
+  }
+}
